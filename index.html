@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Julio's Pizzaria | Tradição e Sabor em Pontal</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+      :root {
+        --bg-dark: #050505;
+        --accent: #F27D26;
+      }
+      
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-dark);
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+
+      h1, h2, h3, .font-display {
+        font-family: 'Playfair Display', serif;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .text-gradient {
+        background: linear-gradient(to right, #ffffff, #F27D26);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .marquee-content {
+        display: flex;
+        animation: marquee 30s linear infinite;
+      }
+
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      .bento-item {
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .bento-item:hover {
+        transform: scale(1.02);
+      }
+
+      .cta-pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(242, 125, 38, 0.4); }
+        70% { box-shadow: 0 0 0 20px rgba(242, 125, 38, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(242, 125, 38, 0); }
+      }
+
+      .mobile-link {
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      
+      .mobile-link:after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--accent);
+        transition: width 0.3s ease;
+      }
+      
+      .mobile-link:hover:after {
+        width: 100%;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #050505;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #F27D26;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- HEADER -->
+    <header class="fixed top-0 left-0 w-full z-50 glass py-4 px-6 md:px-12 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <!-- Logo Placeholder -->
+        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 group hover:border-[#F27D26] transition-colors overflow-hidden">
+          <span class="text-[10px] text-gray-500 font-bold uppercase text-center px-1 group-hover:text-[#F27D26]">LOGO AQUI</span>
+        </div>
+        <div class="text-xl md:text-2xl font-display font-bold tracking-tighter">
+          JULIO'S PIZZARIA<span class="text-[#F27D26]">.</span>
+        </div>
+      </div>
+      
+      <!-- Desktop Nav -->
+      <nav class="hidden lg:flex gap-8 text-sm font-medium uppercase tracking-widest opacity-70">
+        <a href="#home" class="hover:text-[#F27D26] transition-colors">Início</a>
+        <a href="#diferenciais" class="hover:text-[#F27D26] transition-colors">Diferenciais</a>
+        <a href="#galeria" class="hover:text-[#F27D26] transition-colors">Galeria</a>
+        <a href="#cardapio" class="hover:text-[#F27D26] transition-colors">Cardápio</a>
+        <a href="#contato" class="hover:text-[#F27D26] transition-colors">Contato</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="https://pedir.delivery/app/juliospizzaria/menu" target="_blank" class="hidden sm:block bg-[#F27D26] text-white px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold hover:bg-orange-600 transition-all">
+          PEDIR AGORA
+        </a>
+        
+        <!-- Mobile Menu Toggle -->
+        <button id="menu-toggle" class="lg:hidden text-white p-2 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-black/95 flex flex-col items-center justify-center gap-8 text-2xl font-display font-bold transform translate-x-full transition-transform duration-500 lg:hidden">
+      <button id="menu-close" class="absolute top-6 right-6 text-white p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <a href="#home" class="mobile-link hover:text-[#F27D26]">Início</a>
+      <a href="#diferenciais" class="mobile-link hover:text-[#F27D26]">Diferenciais</a>
+      <a href="#galeria" class="mobile-link hover:text-[#F27D26]">Galeria</a>
+      <a href="#cardapio" class="mobile-link hover:text-[#F27D26]">Cardápio</a>
+      <a href="#contato" class="mobile-link hover:text-[#F27D26]">Contato</a>
+      <a href="https://pedir.delivery/app/juliospizzaria/menu" target="_blank" class="bg-[#F27D26] text-white px-8 py-3 rounded-full text-lg font-bold">PEDIR AGORA</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2070&auto=format&fit=crop" 
+          alt="Pizza Hero" 
+          class="w-full h-full object-cover opacity-40 scale-110"
+          id="hero-img"
+          referrerpolicy="no-referrer"
+        >
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/80 to-[#050505]"></div>
+      </div>
+
+      <div class="relative z-10 text-center px-6 max-w-5xl">
+        <h1 class="text-4xl sm:text-5xl md:text-8xl font-display font-bold leading-tight mb-6 reveal-type">
+          Sabor que une, <br> <span class="italic text-gradient">tradição que apaixona.</span>
+        </h1>
+        <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto reveal-text">
+          Da pizza crocante ao macarrão ao vivo: a experiência gastronômica mais completa e saborosa de Pontal.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal-btn">
+          <a href="https://pedir.delivery/app/juliospizzaria/menu" class="cta-pulse w-full sm:w-auto bg-[#F27D26] text-white px-10 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform">
+            Ver Cardápio
+          </a>
+          <a href="https://www.instagram.com/julios_pizzaria/" target="_blank" class="glass w-full sm:w-auto px-10 py-4 rounded-full text-lg font-bold hover:bg-white/10 transition-all">
+            Instagram
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTHORITY MARQUEE -->
+    <section class="py-12 border-y border-white/5 overflow-hidden">
+      <div class="marquee-content gap-12 md:gap-24 items-center">
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">PIZZAS ARTESANAIS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">MACARRÃO AO VIVO</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">LANCHES SUCULENTOS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ESFIRRAS FOFINHAS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">RODÍZIO PREMIUM</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ENTREGA RÁPIDA</span>
+        <!-- Duplicate for loop -->
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">PIZZAS ARTESANAIS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">MACARRÃO AO VIVO</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">LANCHES SUCULENTOS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ESFIRRAS FOFINHAS</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">RODÍZIO PREMIUM</span>
+        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ENTREGA RÁPIDA</span>
+      </div>
+    </section>
+
+    <!-- DIFERENCIAIS (BENTO GRID) -->
+    <section id="diferenciais" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <div class="mb-16 text-center">
+        <h2 class="text-4xl md:text-6xl font-display font-bold mb-4">Por que a Julio's?</h2>
+        <p class="text-gray-400 max-w-xl mx-auto">Transformamos sua refeição em uma experiência completa com tradição, sabor e agilidade.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-auto md:grid-rows-2 gap-4 h-auto md:h-[600px]">
+        <!-- Macarrão ao Vivo -->
+        <div class="md:col-span-2 md:row-span-2 glass rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden bento-item group">
+          <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=1994&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
+          <div class="relative z-10">
+            <span class="text-[#F27D26] font-bold text-sm uppercase tracking-widest mb-2 block">Exclusividade</span>
+            <h3 class="text-3xl font-display font-bold mb-4">Macarrão ao Vivo</h3>
+            <p class="text-gray-400">Prepare sua massa do seu jeito, com ingredientes frescos escolhidos por você na hora.</p>
+          </div>
+        </div>
+
+        <!-- Variedade -->
+        <div class="md:col-span-2 glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <h3 class="text-2xl font-display font-bold mb-2">Variedade Incomparável</h3>
+          <p class="text-gray-400">Pizzas, Esfirras, Lanches, Porções e muito mais para agradar toda a família.</p>
+        </div>
+
+        <!-- Delivery -->
+        <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <h3 class="text-2xl font-display font-bold mb-2">Delivery Veloz</h3>
+          <p class="text-gray-400">Sua fome tem pressa. Entregamos quentinho na sua mesa.</p>
+        </div>
+
+        <!-- Qualidade -->
+        <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <h3 class="text-2xl font-display font-bold mb-2">Qualidade Premium</h3>
+          <p class="text-gray-400">Apenas ingredientes selecionados e frescos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE / SERVIÇOS -->
+    <section id="cardapio" class="py-24 bg-[#0a0a0a]">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-16 items-center">
+        <div class="reveal-left">
+          <h2 class="text-4xl md:text-6xl font-display font-bold mb-8">Almoço com <br><span class="italic text-[#F27D26]">Sabor de Casa</span></h2>
+          <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+            Oferecemos o tradicional Prato Feito (PF), ideal para quem não abre mão de uma comida sustanciosa e com tempero caseiro no dia a dia. Tudo feito com paixão para você.
+          </p>
+          <ul class="space-y-4 mb-10">
+            <li class="flex items-center gap-4">
+              <div class="w-2 h-2 bg-[#F27D26] rounded-full"></div>
+              <span>Tempero Caseiro Autêntico</span>
+            </li>
+            <li class="flex items-center gap-4">
+              <div class="w-2 h-2 bg-[#F27D26] rounded-full"></div>
+              <span>Ingredientes Frescos do Dia</span>
+            </li>
+            <li class="flex items-center gap-4">
+              <div class="w-2 h-2 bg-[#F27D26] rounded-full"></div>
+              <span>Melhor Custo-Benefício da Região</span>
+            </li>
+          </ul>
+          <a href="tel:16994292231" class="inline-block border-b-2 border-[#F27D26] pb-2 font-bold hover:text-[#F27D26] transition-all">
+            Ligar agora: (16) 99429-2231
+          </a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-right">
+          <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?q=80&w=1974&auto=format&fit=crop" class="rounded-2xl w-full h-48 sm:h-64 object-cover" alt="Food 1" referrerpolicy="no-referrer">
+          <img src="https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=2070&auto=format&fit=crop" class="rounded-2xl w-full h-48 sm:h-64 object-cover sm:mt-8" alt="Food 2" referrerpolicy="no-referrer">
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERIA DE DELÍCIAS -->
+    <section id="galeria" class="py-24 bg-[#050505]">
+      <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-6xl font-display font-bold mb-4">Nossa Galeria</h2>
+          <p class="text-gray-400 max-w-xl mx-auto">Uma explosão de sabores e refrescância para os seus sentidos.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Pizza 1 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1593504049359-7b7d92c7185d?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 1" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Artesanal</span>
+            </div>
+          </div>
+          <!-- Beer 1 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1618885472179-5e474019f2a9?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 1" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Gelada</span>
+            </div>
+          </div>
+          <!-- Pizza 2 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 2" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Saborosa</span>
+            </div>
+          </div>
+          <!-- Beer 2 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 2" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Refrescante</span>
+            </div>
+          </div>
+          <!-- Pizza 3 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?q=80&w=1925&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 3" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Crocante</span>
+            </div>
+          </div>
+          <!-- Beer 3 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 3" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Premium</span>
+            </div>
+          </div>
+          <!-- Pizza 4 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?q=80&w=1888&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 4" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Irresistível</span>
+            </div>
+          </div>
+          <!-- Beer 4 -->
+          <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
+            <img src="https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?q=80&w=2071&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 4" referrerpolicy="no-referrer">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white font-bold tracking-widest uppercase text-sm">Tradição</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-6xl font-display font-bold mb-4">O que dizem nossos clientes</h2>
+        <div class="flex justify-center gap-1 text-[#F27D26]">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          <span class="ml-2 text-white font-bold">4.8 (17 avaliações)</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass p-8 rounded-3xl reveal-up">
+          <p class="text-gray-300 italic mb-6">"A melhor pizza de Pontal! O atendimento é nota 10 e o delivery é muito rápido. Recomendo o macarrão ao vivo também!"</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
+            <div>
+              <h4 class="font-bold">Ricardo S.</h4>
+              <span class="text-xs text-gray-500">Cliente Fiel</span>
+            </div>
+          </div>
+        </div>
+        <div class="glass p-8 rounded-3xl reveal-up" style="transition-delay: 0.2s;">
+          <p class="text-gray-300 italic mb-6">"Lanches maravilhosos e esfirras super fofinhas. O ambiente é muito agradável para levar a família."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
+            <div>
+              <h4 class="font-bold">Maria Oliveira</h4>
+              <span class="text-xs text-gray-500">Guia Local</span>
+            </div>
+          </div>
+        </div>
+        <div class="glass p-8 rounded-3xl reveal-up" style="transition-delay: 0.4s;">
+          <p class="text-gray-300 italic mb-6">"O rodízio de comida de buteco é sensacional. Preço justo e qualidade impecável em tudo que servem."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
+            <div>
+              <h4 class="font-bold">João Pedro</h4>
+              <span class="text-xs text-gray-500">Cliente</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contato" class="py-12 border-t border-white/5 px-6 md:px-12">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div class="text-left">
+          <div class="text-2xl font-display font-bold mb-2">JULIO'S PIZZARIA<span class="text-[#F27D26]">.</span></div>
+          <p class="text-gray-500 text-sm mb-4">R. José Leonel Pupo, 534 - Centro, Pontal - SP</p>
+          <div class="flex flex-col gap-2 text-sm text-gray-400">
+            <a href="tel:1639538263" class="hover:text-[#F27D26] transition-colors flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              Fixo: (16) 3953-8263
+            </a>
+            <a href="https://wa.me/5516991519239" target="_blank" class="hover:text-[#F27D26] transition-colors flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              WhatsApp: (16) 99151-9239
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex gap-6 mt-4 md:mt-0">
+          <a href="https://www.instagram.com/julios_pizzaria/" class="text-gray-400 hover:text-white transition-colors">Instagram</a>
+          <a href="https://www.facebook.com/juliospizzapontal" class="text-gray-400 hover:text-white transition-colors">Facebook</a>
+          <a href="https://pedir.delivery/app/julios-pizzaria" class="text-gray-400 hover:text-white transition-colors">Cardápio</a>
+        </div>
+
+        <div class="text-sm text-gray-600">
+          &copy; 2026 Julio's Pizzaria. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/5516991519239" target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+      <span class="absolute right-full mr-4 bg-white text-black px-4 py-2 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+        Fale conosco no WhatsApp!
+      </span>
+    </a>
+
+    <script>
+      // GSAP Animations
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero Entrance
+      const tl = gsap.timeline();
+      tl.from(".reveal-type", {
+        y: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        stagger: 0.2
+      })
+      .from(".reveal-text", {
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, "-=0.8")
+      .from(".reveal-btn", {
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, "-=0.8")
+      .from("#hero-img", {
+        scale: 1.3,
+        duration: 2.5,
+        ease: "power2.out"
+      }, 0);
+
+      // Scroll Reveals
+      gsap.utils.toArray(".reveal-up").forEach(el => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+          },
+          y: 60,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out"
+        });
+      });
+
+      gsap.from(".reveal-left", {
+        scrollTrigger: {
+          trigger: ".reveal-left",
+          start: "top 80%",
+        },
+        x: -100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out"
+      });
+
+      gsap.from(".reveal-right", {
+        scrollTrigger: {
+          trigger: ".reveal-right",
+          start: "top 80%",
+        },
+        x: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out"
+      });
+
+      // Bento Items Stagger
+      gsap.from(".bento-item", {
+        scrollTrigger: {
+          trigger: "#diferenciais",
+          start: "top 70%",
+        },
+        scale: 0.9,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "back.out(1.7)"
+      });
+
+      // Gallery Animation
+      gsap.from(".reveal-gallery", {
+        scrollTrigger: {
+          trigger: "#galeria",
+          start: "top 70%",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out"
+      });
+
+      // Mobile Menu Logic
+      const menuToggle = document.getElementById('menu-toggle');
+      const menuClose = document.getElementById('menu-close');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+
+      const openMenu = () => {
+        mobileMenu.classList.remove('translate-x-full');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeMenu = () => {
+        mobileMenu.classList.add('translate-x-full');
+        document.body.style.overflow = '';
+      };
+
+      menuToggle.addEventListener('click', openMenu);
+      menuClose.addEventListener('click', closeMenu);
+      mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+    </script>
+  </body>
+</html>
+
