@@ -19,15 +19,28 @@
 
     <style>
       :root {
-        --bg-dark: #050505;
+        --bg-dark: #120d0b;
         --accent: #F27D26;
       }
       
+      /* 1. RESET DE BOX-SIZING: Essencial para evitar que bordas e paddings empurrem o site para o lado */
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden; /* Garante que nada passe da borda direita */
+        margin: 0;
+        padding: 0;
+      }
+
       body {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: var(--bg-dark);
+        background: radial-gradient(circle at center, #1e1512 0%, var(--bg-dark) 100%);
+        background-attachment: fixed; /* O fundo não corre quando você rola a página */
         color: #ffffff;
-        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased; /* Melhora a leitura no mobile */
       }
 
       h1, h2, h3, .font-display {
@@ -44,12 +57,21 @@
       .text-gradient {
         background: linear-gradient(to right, #ffffff, #F27D26);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
+      }
+
+      /* 2. AJUSTE NO MARQUEE: O culpado número 1 da rolagem lateral */
+      .marquee-container {
+        width: 100%;
+        overflow: hidden; /* Corta o que sobrar do letreiro */
       }
 
       .marquee-content {
         display: flex;
+        white-space: nowrap; /* Impede que o texto quebre linha */
         animation: marquee 30s linear infinite;
+        width: max-content; /* Garante que o container tenha o tamanho real do conteúdo */
       }
 
       @keyframes marquee {
@@ -59,6 +81,7 @@
 
       .bento-item {
         transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 100%; /* Impede que o item do grid estoure no mobile */
       }
       
       .bento-item:hover {
@@ -75,26 +98,6 @@
         100% { box-shadow: 0 0 0 0 rgba(242, 125, 38, 0); }
       }
 
-      .mobile-link {
-        transition: all 0.3s ease;
-        position: relative;
-      }
-      
-      .mobile-link:after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--accent);
-        transition: width 0.3s ease;
-      }
-      
-      .mobile-link:hover:after {
-        width: 100%;
-      }
-
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
@@ -108,6 +111,7 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #F27D26;
+        background: #fd9f64;
       }
     </style>
   </head>
@@ -117,8 +121,12 @@
     <header class="fixed top-0 left-0 w-full z-50 glass py-4 px-6 md:px-12 flex justify-between items-center">
       <div class="flex items-center gap-4">
         <!-- Logo Placeholder -->
-        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 group hover:border-[#F27D26] transition-colors overflow-hidden">
-          <span class="text-[10px] text-gray-500 font-bold uppercase text-center px-1 group-hover:text-[#F27D26]">LOGO AQUI</span>
+        <div class="w-48 h-24 md:w-64 md:h-32 flex items-center justify-center group overflow-hidden transition-all duration-300">
+          <img 
+            src="/Logo_digital_da_Julio_s_Pizzaria-1.png" 
+            alt="Logo Júlio's Pizzaria" 
+            class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+          />
         </div>
         <div class="text-xl md:text-2xl font-display font-bold tracking-tighter">
           JULIO'S PIZZARIA<span class="text-[#F27D26]">.</span>
@@ -165,22 +173,21 @@
 
     <!-- HERO SECTION -->
     <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 z-0 overflow-hidden">
         <img 
-          src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2070&auto=format&fit=crop" 
-          alt="Pizza Hero" 
-          class="w-full h-full object-cover opacity-40 scale-110"
+          src="/pizza-hero4.png" 
+          alt="Pizza Especial da Júlio's Pizzaria" 
+          class="w-full h-full object-cover opacity-80 scale-100 transition-transform duration-10000 ease-linear hover:scale-110"
           id="hero-img"
-          referrerpolicy="no-referrer"
         >
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/80 to-[#050505]"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-[var(--bg-dark)]/90"></div>
       </div>
 
       <div class="relative z-10 text-center px-6 max-w-5xl">
         <h1 class="text-4xl sm:text-5xl md:text-8xl font-display font-bold leading-tight mb-6 reveal-type">
           Sabor que une, <br> <span class="italic text-gradient">tradição que apaixona.</span>
         </h1>
-        <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto reveal-text">
+        <p class="text-base sm:text-lg md:text-xl text-white-400 mb-10 max-w-2xl mx-auto reveal-text">
           Da pizza crocante ao macarrão ao vivo: a experiência gastronômica mais completa e saborosa de Pontal.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal-btn">
@@ -195,35 +202,35 @@
     </section>
 
     <!-- AUTHORITY MARQUEE -->
-    <section class="py-12 border-y border-white/5 overflow-hidden">
+    <section class="py-8 md:py-12 bg-white/5 overflow-hidden border-y border-white/10 shadow-lg">
       <div class="marquee-content gap-12 md:gap-24 items-center">
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">PIZZAS ARTESANAIS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">MACARRÃO AO VIVO</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">LANCHES SUCULENTOS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ESFIRRAS FOFINHAS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">RODÍZIO PREMIUM</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ENTREGA RÁPIDA</span>
-        <!-- Duplicate for loop -->
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">PIZZAS ARTESANAIS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">MACARRÃO AO VIVO</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">LANCHES SUCULENTOS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ESFIRRAS FOFINHAS</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">RODÍZIO PREMIUM</span>
-        <span class="text-2xl md:text-4xl font-display italic opacity-30 whitespace-nowrap">ENTREGA RÁPIDA</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">PIZZAS ARTESANAIS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">MACARRÃO AO VIVO</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">LANCHES SUCULENTOS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">ESFIRRAS FOFINHAS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">RODÍZIO PREMIUM</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">ENTREGA RÁPIDA</span>
+        
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">PIZZAS ARTESANAIS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">MACARRÃO AO VIVO</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">LANCHES SUCULENTOS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">ESFIRRAS FOFINHAS</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">RODÍZIO PREMIUM</span>
+        <span class="text-2xl md:text-4xl font-display italic text-white opacity-90 whitespace-nowrap uppercase tracking-tighter">ENTREGA RÁPIDA</span>
       </div>
     </section>
 
     <!-- DIFERENCIAIS (BENTO GRID) -->
     <section id="diferenciais" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
       <div class="mb-16 text-center">
-        <h2 class="text-4xl md:text-6xl font-display font-bold mb-4">Por que a Julio's?</h2>
+        <h2 class="text-4xl md:text-6xl font-display font-bold mb-4">Por que a Julio's Pizzaria?</h2>
         <p class="text-gray-400 max-w-xl mx-auto">Transformamos sua refeição em uma experiência completa com tradição, sabor e agilidade.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-auto md:grid-rows-2 gap-4 h-auto md:h-[600px]">
         <!-- Macarrão ao Vivo -->
         <div class="md:col-span-2 md:row-span-2 glass rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden bento-item group">
-          <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=1994&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
+          <img src="/macarraoAoVivo.png" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
           <div class="relative z-10">
             <span class="text-[#F27D26] font-bold text-sm uppercase tracking-widest mb-2 block">Exclusividade</span>
             <h3 class="text-3xl font-display font-bold mb-4">Macarrão ao Vivo</h3>
@@ -231,22 +238,32 @@
           </div>
         </div>
 
+        <!-- Rodízio -->
+        <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <img src="/Rodízio de pizzas no Júlio's.png" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
+          <h3 class="text-2xl font-display font-bold mb-2">Nosso Rodízio é...</h3>
+          <p class="text-gray-400">Rodízio sem limites, sabores que não acabam e uma experiência que você vai querer repetir!.</p>
+        </div>
+
         <!-- Variedade -->
         <div class="md:col-span-2 glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <img src="/variedades.png" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
           <h3 class="text-2xl font-display font-bold mb-2">Variedade Incomparável</h3>
           <p class="text-gray-400">Pizzas, Esfirras, Lanches, Porções e muito mais para agradar toda a família.</p>
         </div>
 
-        <!-- Delivery -->
-        <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
-          <h3 class="text-2xl font-display font-bold mb-2">Delivery Veloz</h3>
-          <p class="text-gray-400">Sua fome tem pressa. Entregamos quentinho na sua mesa.</p>
-        </div>
-
         <!-- Qualidade -->
         <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <img src="/Ingredientes.png" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
           <h3 class="text-2xl font-display font-bold mb-2">Qualidade Premium</h3>
           <p class="text-gray-400">Apenas ingredientes selecionados e frescos.</p>
+        </div>
+
+        <!-- Delivery -->
+        <div class="glass rounded-3xl p-8 flex flex-col justify-center bento-item">
+          <img src="/Entrega rápida da Julio's Pizzaria.png" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" referrerpolicy="no-referrer">
+          <h3 class="text-2xl font-display font-bold mb-2">Delivery Veloz</h3>
+          <p class="text-gray-400">Sua fome tem pressa. Entregamos quentinho na sua mesa.</p>
         </div>
       </div>
     </section>
@@ -273,13 +290,10 @@
               <span>Melhor Custo-Benefício da Região</span>
             </li>
           </ul>
-          <a href="tel:16994292231" class="inline-block border-b-2 border-[#F27D26] pb-2 font-bold hover:text-[#F27D26] transition-all">
-            Ligar agora: (16) 99429-2231
-          </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-right">
-          <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?q=80&w=1974&auto=format&fit=crop" class="rounded-2xl w-full h-48 sm:h-64 object-cover" alt="Food 1" referrerpolicy="no-referrer">
-          <img src="https://images.unsplash.com/photo-1512152272829-e3139592d56f?q=80&w=2070&auto=format&fit=crop" class="rounded-2xl w-full h-48 sm:h-64 object-cover sm:mt-8" alt="Food 2" referrerpolicy="no-referrer">
+          <img src="/almoco.jpeg" class="rounded-2xl w-full h-48 sm:h-64 object-cover" alt="Food 1" referrerpolicy="no-referrer">
+          <img src="/marmita.jpeg" class="rounded-2xl w-full h-48 sm:h-64 object-cover sm:mt-8" alt="Food 2" referrerpolicy="no-referrer">
         </div>
       </div>
     </section>
@@ -293,58 +307,58 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <!-- Pizza 1 -->
+          <!-- Esfirra 1 -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1593504049359-7b7d92c7185d?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 1" referrerpolicy="no-referrer">
+            <img src="/Esfirra1.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 1" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Artesanal</span>
             </div>
           </div>
-          <!-- Beer 1 -->
+          <!-- Macarrão 2 -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1618885472179-5e474019f2a9?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 1" referrerpolicy="no-referrer">
+            <img src="/macarrao2.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 1" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Gelada</span>
             </div>
           </div>
-          <!-- Pizza 2 -->
+          <!-- Pizza Recheada -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 2" referrerpolicy="no-referrer">
+            <img src="/pizza-recheada.webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 2" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Saborosa</span>
             </div>
           </div>
-          <!-- Beer 2 -->
+          <!-- Comida Boteco -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1535958636474-b021ee887b13?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 2" referrerpolicy="no-referrer">
+            <img src="/Comida de boteco e bebidas.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 2" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Refrescante</span>
             </div>
           </div>
-          <!-- Pizza 3 -->
+          <!-- Lanche -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?q=80&w=1925&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 3" referrerpolicy="no-referrer">
+            <img src="/lanche.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 3" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Crocante</span>
             </div>
           </div>
-          <!-- Beer 3 -->
+          <!-- Porção -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 3" referrerpolicy="no-referrer">
+            <img src="/porcao.webp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 3" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Premium</span>
             </div>
           </div>
-          <!-- Pizza 4 -->
+          <!-- Macarrão -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?q=80&w=1888&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 4" referrerpolicy="no-referrer">
+            <img src="/macarrao.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Pizza 4" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Irresistível</span>
             </div>
           </div>
-          <!-- Beer 4 -->
+          <!-- Doces -->
           <div class="relative overflow-hidden rounded-2xl aspect-square group reveal-gallery">
-            <img src="https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?q=80&w=2071&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 4" referrerpolicy="no-referrer">
+            <img src="/doces.jpeg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Beer 4" referrerpolicy="no-referrer">
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span class="text-white font-bold tracking-widest uppercase text-sm">Tradição</span>
             </div>
@@ -422,11 +436,11 @@
         <div class="flex gap-6 mt-4 md:mt-0">
           <a href="https://www.instagram.com/julios_pizzaria/" class="text-gray-400 hover:text-white transition-colors">Instagram</a>
           <a href="https://www.facebook.com/juliospizzapontal" class="text-gray-400 hover:text-white transition-colors">Facebook</a>
-          <a href="https://pedir.delivery/app/julios-pizzaria" class="text-gray-400 hover:text-white transition-colors">Cardápio</a>
+          <a href="https://pedir.delivery/app/juliospizzaria/menu" class="text-gray-400 hover:text-white transition-colors">Cardápio</a>
         </div>
 
         <div class="text-sm text-gray-600">
-          &copy; 2026 Julio's Pizzaria. Todos os direitos reservados.
+          &copy; 2026 T&S - Tecnologia e Serviços. Todos os direitos reservados.
         </div>
       </div>
     </footer>
